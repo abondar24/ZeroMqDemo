@@ -86,3 +86,8 @@ go build
 ```yaml
    ./main msgqueue
 ```
+
+- interrupt - client for hwserver for proper CTRL-C handling via channels
+```yaml
+   ./main interrupt
+```

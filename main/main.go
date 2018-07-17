@@ -28,6 +28,7 @@ var (
     rrBroker = base.Command("rrbroker","Request Reply Broker")
     rrWorker = base.Command("rrworker","Request Reply Worker")
     msqQueue = base.Command("msgqueue","Message Queue")
+    interrupt = base.Command("interrupt","Interrupt Client")
 
 )
 
@@ -78,7 +79,8 @@ func main() {
 	case msqQueue.FullCommand():
 		queues.MsgQueue()
 
-
+	case interrupt.FullCommand():
+		clients.Interrupt()
 	}
 
 	os.Exit(0)
