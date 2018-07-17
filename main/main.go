@@ -8,6 +8,7 @@ import (
 	"os"
 	"github.com/abondar24/ZeroMqDemo/workers"
 	"github.com/abondar24/ZeroMqDemo/brokers"
+	"github.com/abondar24/ZeroMqDemo/queues"
 )
 
 var (
@@ -26,6 +27,8 @@ var (
     rrClient = base.Command("rrclient","Request Reply Client")
     rrBroker = base.Command("rrbroker","Request Reply Broker")
     rrWorker = base.Command("rrworker","Request Reply Worker")
+    msqQueue = base.Command("msgqueue","Message Queue")
+
 )
 
 func main() {
@@ -71,6 +74,10 @@ func main() {
 
 	case rrWorker.FullCommand():
 		workers.RRworker()
+
+	case msqQueue.FullCommand():
+		queues.MsgQueue()
+
 
 	}
 

@@ -81,3 +81,8 @@ go build
 ```yaml
    ./main rrworker
 ```
+
+- msgqueue - proxy based variant of rrbroker
+```yaml
+   ./main msgqueue
+```
