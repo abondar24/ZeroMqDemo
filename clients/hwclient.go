@@ -10,17 +10,23 @@ func HwClient(){
 
 	socket, err := zmq4.NewSocket(zmq4.REQ)
 	if err!=nil{
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 
 	defer  socket.Close()
 
 	fmt.Println("Connecting to hwserver")
-	socket.Connect("tcp://localhost:5555")
+	if socket.Connect("tcp://localhost:5555")!=nil{
+		log.Fatalln(err)
+	}
 
 	for i:=0; i<10; i++{
 		msg := fmt.Sprintf("Message %d",i)
-		socket.Send(msg,0)
+		_,err = socket.Send(msg,0)
+		if err!=nil{
+			log.Println(err)
+		}
+
 		fmt.Println("Sending ", msg)
 
 		reply,err :=socket.Recv(0)

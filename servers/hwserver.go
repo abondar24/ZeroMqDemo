@@ -11,13 +11,15 @@ func HwServer(){
 
 	socket, err := zmq4.NewSocket(zmq4.REP)
 	if err!=nil{
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 
 
 	defer  socket.Close()
 
-	socket.Bind("tcp://*:5555")
+	if socket.Bind("tcp://*:5555")!= nil {
+		log.Fatalln(err)
+	}
 
 	for {
 		msg,err := socket.Recv(0)
@@ -30,7 +32,10 @@ func HwServer(){
 		time.Sleep(time.Second)
 
 		reply := fmt.Sprintf("Hi")
-		socket.Send(reply,0)
+		_,err = socket.Send(reply,0)
+		if err!=nil{
+			log.Println(msg)
+		}
 	}
 
 }

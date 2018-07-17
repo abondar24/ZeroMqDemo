@@ -13,10 +13,13 @@ func TaskWorker() {
 	//get msg from ventilator
 	receiver, err := zmq4.NewSocket(zmq4.PULL)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 	defer receiver.Close()
-	receiver.Connect("tcp://localhost:5557")
+
+	if receiver.Connect("tcp://localhost:5557") != nil {
+		log.Fatalln(err)
+	}
 
 	//send messages to task sink
 	sender, err := zmq4.NewSocket(zmq4.PUSH)
@@ -24,7 +27,10 @@ func TaskWorker() {
 		log.Fatal(err)
 	}
 	defer sender.Close()
-	sender.Connect("tcp://localhost:5558")
+
+	if sender.Connect("tcp://localhost:5558") != nil {
+		log.Fatalln(err)
+	}
 
 	//input control socket
 	controller, err := zmq4.NewSocket(zmq4.SUB)
@@ -33,8 +39,13 @@ func TaskWorker() {
 	}
 	defer controller.Close()
 
-	controller.Connect("tcp://localhost:5559")
-	controller.SetSubscribe("")
+	if controller.Connect("tcp://localhost:5559") != nil {
+		log.Fatalln(err)
+	}
+
+	if controller.SetSubscribe("") !=nil{
+		log.Fatalln(err)
+	}
 
 	poller := zmq4.NewPoller()
 	poller.Add(receiver, zmq4.POLLIN)
@@ -65,7 +76,10 @@ func TaskWorker() {
 
 				time.Sleep(time.Duration(msec) * 1e6)
 
-				sender.Send(msg, 0)
+				_,err = sender.Send(msg, 0)
+				if err != nil {
+					log.Println(err)
+				}
 
 			case controller:
 				fmt.Println("stopping")

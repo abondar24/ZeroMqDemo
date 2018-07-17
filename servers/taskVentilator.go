@@ -8,24 +8,28 @@ import (
 	"time"
 )
 
-func TaskVentilator(){
-
+func TaskVentilator() {
 
 	sender, err := zmq4.NewSocket(zmq4.PUSH)
-	if err!=nil{
-		log.Fatal(err)
+	if err != nil {
+		log.Fatalln(err)
 	}
-	defer  sender.Close()
+	defer sender.Close()
 
-	sender.Bind("tcp://*:5557")
+	if sender.Bind("tcp://*:5557") != nil {
+		log.Fatalln(err)
+	}
 
 	//sender for sending start of batch message
-	sink,err := zmq4.NewSocket(zmq4.PUSH)
-	if err!=nil{
-		log.Fatal(err)
+	sink, err := zmq4.NewSocket(zmq4.PUSH)
+	if err != nil {
+		log.Fatalln(err)
 	}
 	defer sink.Close()
-	sink.Connect("tcp://localhost:5558")
+
+	if sink.Connect("tcp://localhost:5558") != nil {
+		log.Fatalln(err)
+	}
 
 	fmt.Print("Print Enter when workers are ready:")
 
@@ -34,20 +38,26 @@ func TaskVentilator(){
 
 	fmt.Println("Sending tasks to workers")
 
-	sink.Send("0",0)
+	_, err = sink.Send("0", 0)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	rand.Seed(time.Now().UnixNano())
 
 	totalMsec := 0
 
-	for i:=0;i<100;i++{
+	for i := 0; i < 100; i++ {
 		workload := rand.Intn(100)
-		totalMsec +=workload
+		totalMsec += workload
 		msg := fmt.Sprintf("%d", workload)
-		sender.Send(msg,0)
+		_, err = sender.Send(msg, 0)
+		if err!=nil{
+			log.Println()
+		}
 	}
 
-	fmt.Printf("Total expected cost: %d msec\n",totalMsec)
+	fmt.Printf("Total expected cost: %d msec\n", totalMsec)
 
 	//time to deliver: 1sec
 	time.Sleep(5e9)

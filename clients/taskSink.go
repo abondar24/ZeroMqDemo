@@ -13,23 +13,31 @@ func TaskSink()  {
 	//get msg from ventilator
 	receiver, err := zmq4.NewSocket(zmq4.PULL)
 	if err!=nil{
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 	defer  receiver.Close()
-	receiver.Bind("tcp://*:5558")
+	if receiver.Bind("tcp://*:5558")!= nil {
+		log.Fatalln(err)
+	}
 
 
 	//input control socket
 	controller, err := zmq4.NewSocket(zmq4.PUB)
 	if err!=nil{
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 	defer controller.Close()
 
-	controller.Bind("tcp://*:5559")
+	if controller.Bind("tcp://*:5559")!= nil {
+		log.Fatalln(err)
+	}
 
 	//wait batch to start
 	msg,err := receiver.Recv(0)
+	if err!=nil{
+		log.Fatalln(err)
+	}
+
 	fmt.Println("Received start msg",msg)
 
 

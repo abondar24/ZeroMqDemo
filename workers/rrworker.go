@@ -13,7 +13,10 @@ func RRworker(){
 		log.Fatal(err)
 	}
 	defer responder.Close()
-	responder.Connect("tcp://localhost:5560")
+
+	if responder.Connect("tcp://localhost:5560") != nil {
+		log.Fatalln(err)
+	}
 
 	for {
 		request,err := responder.Recv(0)
@@ -23,7 +26,10 @@ func RRworker(){
 		fmt.Printf("Received request: [%s]\n",request)
 
 		time.Sleep(time.Second)
-		responder.Send("World",0)
+		_,err = responder.Send("World",0)
+		if err!=nil{
+			log.Println(err)
+		}
 
 	}
 }

@@ -13,13 +13,18 @@ func WuServer(){
 
 	socket, err := zmq4.NewSocket(zmq4.PUB)
 	if err!=nil{
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 
 	defer  socket.Close()
 
-	socket.Bind("tcp://*:5556")
-	socket.Bind("ipc://weather.ipc")
+	if socket.Bind("tcp://*:5556")!= nil {
+		log.Fatalln(err)
+	}
+
+	if socket.Bind("ipc://weather.ipc")!= nil {
+		log.Fatalln(err)
+	}
 
 	rand.Seed(time.Now().UnixNano())
 
@@ -30,6 +35,9 @@ func WuServer(){
 
 		msg := fmt.Sprintf("%d %d %d",zipcode,temperature,humidity)
 
-		socket.Send(msg,0)
+		_, err = socket.Send(msg, 0)
+		if err!=nil{
+			log.Println()
+		}
 	}
 }

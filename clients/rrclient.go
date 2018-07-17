@@ -9,13 +9,19 @@ import (
 func RRclient(){
 	requester,err := zmq4.NewSocket(zmq4.REQ)
 	if err!=nil{
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 	defer requester.Close()
-	requester.Connect("tcp://localhost:5559")
+	if requester.Connect("tcp://localhost:5559")!= nil {
+		log.Fatalln(err)
+	}
 
 	for request :=0; request<10;request++{
-		requester.Send("Hello",0)
+		_,err=requester.Send("Hello",0)
+		if err!=nil{
+			log.Println(err)
+		}
+
 		reply,err := requester.Recv(0)
 		if err!=nil{
 			log.Println(err)

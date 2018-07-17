@@ -12,7 +12,7 @@ func WuClient(zipcode string){
 
 	socket, err := zmq4.NewSocket(zmq4.SUB)
 	if err!=nil{
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 
 	defer  socket.Close()
@@ -28,8 +28,13 @@ func WuClient(zipcode string){
 
 
 	fmt.Printf("Collecting weather updates for %s...\n",filter)
-	socket.SetSubscribe(filter)
-	socket.Connect("tcp://localhost:5556")
+	if socket.SetSubscribe(filter)!= nil {
+		log.Fatalln(err)
+	}
+
+	if socket.Connect("tcp://localhost:5556")!= nil {
+		log.Fatalln(err)
+	}
 
 	for i:=0; i<101; i++{
 		datapt,err := socket.Recv(0)

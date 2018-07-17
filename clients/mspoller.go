@@ -6,29 +6,37 @@ import (
 	"fmt"
 )
 
-func MsPoller()  {
+func MsPoller() {
 
 	//read from task ventilator
-	receiver,err := zmq4.NewSocket(zmq4.PULL)
-	if err!=nil{
-		log.Fatal(err)
+	receiver, err := zmq4.NewSocket(zmq4.PULL)
+	if err != nil {
+		log.Fatalln(err)
 	}
-	defer  receiver.Close()
-	receiver.Connect("tcp://localhost:5557")
+	defer receiver.Close()
+
+	if receiver.Connect("tcp://localhost:5557") != nil {
+		log.Fatalln(err)
+	}
 
 	//reads from weather update
-	subscriber,err:=zmq4.NewSocket(zmq4.SUB)
-	if err!=nil{
-		log.Fatal(err)
+	subscriber, err := zmq4.NewSocket(zmq4.SUB)
+	if err != nil {
+		log.Fatalln(err)
 	}
 	defer subscriber.Close()
-	subscriber.Connect("tcp://localhost:5556")
-	subscriber.SetSubscribe("95134")
 
+	if subscriber.Connect("tcp://localhost:5556") != nil {
+		log.Fatalln(err)
+	}
+
+	if subscriber.SetSubscribe("95134") != nil {
+		log.Fatalln(err)
+	}
 
 	poller := zmq4.NewPoller()
-	poller.Add(receiver,zmq4.POLLIN)
-	poller.Add(subscriber,zmq4.POLLIN)
+	poller.Add(receiver, zmq4.POLLIN)
+	poller.Add(subscriber, zmq4.POLLIN)
 
 	for {
 		sockets, err := poller.Poll(-1)
@@ -52,11 +60,10 @@ func MsPoller()  {
 					log.Println(err)
 				}
 
-				fmt.Println("Got weather update:",update)
+				fmt.Println("Got weather update:", update)
 				return
 			}
 		}
-
 
 	}
 
