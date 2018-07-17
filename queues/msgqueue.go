@@ -12,7 +12,8 @@ func MsgQueue() {
 	}
 	defer frontend.Close()
 
-	if frontend.Bind("tcp://*:5559") != nil {
+	err = frontend.Bind("tcp://*:5559")
+	if err != nil {
 		log.Fatalln(err)
 	}
 
@@ -22,11 +23,14 @@ func MsgQueue() {
 	}
 
 	defer backend.Close()
-	if backend.Bind("tcp://*:5560") != nil {
+
+	err = backend.Bind("tcp://*:5560")
+	if err != nil {
 		log.Fatalln(err)
 	}
 
-	if zmq4.Proxy(frontend,backend,nil)!=nil{
+	err = zmq4.Proxy(frontend, backend, nil)
+	if err != nil {
 		log.Fatalln(err)
 	}
 

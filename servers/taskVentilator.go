@@ -1,9 +1,9 @@
 package servers
 
 import (
-	"log"
 	"fmt"
 	"github.com/pebbe/zmq4"
+	"log"
 	"math/rand"
 	"time"
 )
@@ -16,7 +16,8 @@ func TaskVentilator() {
 	}
 	defer sender.Close()
 
-	if sender.Bind("tcp://*:5557") != nil {
+	err = sender.Bind("tcp://*:5557")
+	if err != nil {
 		log.Fatalln(err)
 	}
 
@@ -27,7 +28,8 @@ func TaskVentilator() {
 	}
 	defer sink.Close()
 
-	if sink.Connect("tcp://localhost:5558") != nil {
+	err = sink.Connect("tcp://localhost:5558")
+	if err != nil {
 		log.Fatalln(err)
 	}
 
@@ -52,7 +54,7 @@ func TaskVentilator() {
 		totalMsec += workload
 		msg := fmt.Sprintf("%d", workload)
 		_, err = sender.Send(msg, 0)
-		if err!=nil{
+		if err != nil {
 			log.Println()
 		}
 	}

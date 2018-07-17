@@ -12,7 +12,8 @@ func RRbroker() {
 	}
 	defer frontend.Close()
 
-	if frontend.Bind("tcp://*:5559") != nil {
+	err = frontend.Bind("tcp://*:5559")
+	if err != nil {
 		log.Fatalln(err)
 	}
 
@@ -22,7 +23,8 @@ func RRbroker() {
 	}
 	defer backend.Close()
 
-	if backend.Bind("tcp://*:5560") != nil {
+	err = backend.Bind("tcp://*:5560")
+	if err != nil {
 		log.Fatalln(err)
 	}
 

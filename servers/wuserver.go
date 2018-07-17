@@ -1,28 +1,27 @@
 package servers
 
 import (
-	"log"
+	"fmt"
 	"github.com/pebbe/zmq4"
+	"log"
 	"math/rand"
 	"time"
-	"fmt"
 )
 
-func WuServer(){
-
+func WuServer() {
 
 	socket, err := zmq4.NewSocket(zmq4.PUB)
-	if err!=nil{
+	if err != nil {
 		log.Fatalln(err)
 	}
 
-	defer  socket.Close()
+	defer socket.Close()
 
-	if socket.Bind("tcp://*:5556")!= nil {
+	if socket.Bind("tcp://*:5556") != nil {
 		log.Fatalln(err)
 	}
 
-	if socket.Bind("ipc://weather.ipc")!= nil {
+	if socket.Bind("ipc://weather.ipc") != nil {
 		log.Fatalln(err)
 	}
 
@@ -33,11 +32,11 @@ func WuServer(){
 		temperature := rand.Intn(215) - 80
 		humidity := rand.Intn(50) + 10
 
-		msg := fmt.Sprintf("%d %d %d",zipcode,temperature,humidity)
+		msg := fmt.Sprintf("%d %d %d", zipcode, temperature, humidity)
 
 		_, err = socket.Send(msg, 0)
-		if err!=nil{
-			log.Println()
+		if err != nil {
+			log.Println(err)
 		}
 	}
 }

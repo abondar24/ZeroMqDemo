@@ -1,9 +1,9 @@
 package clients
 
 import (
-	"log"
-	"github.com/pebbe/zmq4"
 	"fmt"
+	"github.com/pebbe/zmq4"
+	"log"
 	"time"
 )
 
@@ -15,7 +15,9 @@ func MsReader() {
 		log.Fatalln(err)
 	}
 	defer receiver.Close()
-	if receiver.Connect("tcp://localhost:5557") != nil {
+
+	err = receiver.Connect("tcp://localhost:5557")
+	if err != nil {
 		log.Fatalln(err)
 	}
 
@@ -25,8 +27,16 @@ func MsReader() {
 		log.Fatalln(err)
 	}
 	defer subscriber.Close()
-	subscriber.Connect("tcp://localhost:5556")
-	subscriber.SetSubscribe("95134")
+
+	err = subscriber.Connect("tcp://localhost:5556")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	err = subscriber.SetSubscribe("95134")
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	//vent traffic has bigger priority
 	for {

@@ -1,52 +1,52 @@
 package clients
 
 import (
-	"log"
-	"github.com/pebbe/zmq4"
 	"fmt"
+	"github.com/pebbe/zmq4"
+	"log"
 	"time"
 )
 
-
-func TaskSink()  {
+func TaskSink() {
 
 	//get msg from ventilator
 	receiver, err := zmq4.NewSocket(zmq4.PULL)
-	if err!=nil{
+	if err != nil {
 		log.Fatalln(err)
 	}
-	defer  receiver.Close()
-	if receiver.Bind("tcp://*:5558")!= nil {
-		log.Fatalln(err)
-	}
+	defer receiver.Close()
 
+	err = receiver.Bind("tcp://*:5558")
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	//input control socket
 	controller, err := zmq4.NewSocket(zmq4.PUB)
-	if err!=nil{
+	if err != nil {
 		log.Fatalln(err)
 	}
 	defer controller.Close()
 
-	if controller.Bind("tcp://*:5559")!= nil {
+	err = controller.Bind("tcp://*:5559")
+	if err != nil {
 		log.Fatalln(err)
 	}
 
 	//wait batch to start
-	msg,err := receiver.Recv(0)
-	if err!=nil{
+	msg, err := receiver.Recv(0)
+	if err != nil {
 		log.Fatalln(err)
 	}
 
-	fmt.Println("Received start msg",msg)
-
+	fmt.Println("Received start msg", msg)
 
 	startTime := time.Now().UnixNano()
 
-	for i:=0; i<100; i++{
-		msg,err= receiver.Recv(0)
+	for i := 0; i < 100; i++ {
+		msg, err = receiver.Recv(0)
 		fmt.Println(msg)
-		if err!=nil{
+		if err != nil {
 			log.Println(err)
 		}
 
@@ -58,13 +58,13 @@ func TaskSink()  {
 	}
 
 	timeEnd := time.Now().UnixNano()
-	fmt.Printf("Total elapsed time: %d msec\n",(timeEnd-startTime)/1e6)
+	fmt.Printf("Total elapsed time: %d msec\n", (timeEnd-startTime)/1e6)
 
-	_,err = controller.Send("KILL",0)
-	if err!=nil{
+	_, err = controller.Send("KILL", 0)
+	if err != nil {
 		log.Println(err)
 	}
 
-	time.Sleep(1*time.Second)
+	time.Sleep(1 * time.Second)
 
 }

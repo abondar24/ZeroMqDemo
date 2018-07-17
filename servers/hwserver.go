@@ -1,29 +1,29 @@
 package servers
 
 import (
+	"fmt"
 	"github.com/pebbe/zmq4"
 	"log"
-	"fmt"
 	"time"
 )
 
-func HwServer(){
+func HwServer() {
 
 	socket, err := zmq4.NewSocket(zmq4.REP)
-	if err!=nil{
+	if err != nil {
 		log.Fatalln(err)
 	}
 
+	defer socket.Close()
 
-	defer  socket.Close()
-
-	if socket.Bind("tcp://*:5555")!= nil {
+	err = socket.Bind("tcp://*:5555")
+	if err != nil {
 		log.Fatalln(err)
 	}
 
 	for {
-		msg,err := socket.Recv(0)
-		if err!=nil{
+		msg, err := socket.Recv(0)
+		if err != nil {
 			log.Println(msg)
 		}
 
@@ -32,8 +32,8 @@ func HwServer(){
 		time.Sleep(time.Second)
 
 		reply := fmt.Sprintf("Hi")
-		_,err = socket.Send(reply,0)
-		if err!=nil{
+		_, err = socket.Send(reply, 0)
+		if err != nil {
 			log.Println(msg)
 		}
 	}

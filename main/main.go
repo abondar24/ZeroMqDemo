@@ -1,35 +1,35 @@
 package main
 
 import (
-	"gopkg.in/alecthomas/kingpin.v2"
 	"github.com/abondar24/ZeroMqDemo/clients"
 	"github.com/abondar24/ZeroMqDemo/servers"
+	"gopkg.in/alecthomas/kingpin.v2"
 
-	"os"
-	"github.com/abondar24/ZeroMqDemo/workers"
 	"github.com/abondar24/ZeroMqDemo/brokers"
 	"github.com/abondar24/ZeroMqDemo/queues"
+	"github.com/abondar24/ZeroMqDemo/workers"
+	"os"
 )
 
 var (
-	base  = kingpin.New("base", "ZeroMQ Demo")
-	hwSrv = base.Command("hwserver", "Run HwServer")
-	hwClt = base.Command("hwclient", "Run HwClient")
-	ver   = base.Command("version", "Show ZeroMQ version")
-	wuSrv = base.Command("wuserver","Weather Update server")
-	wuClt = base.Command("wuclient","Weather Update Client")
-	wuCltArgs = wuClt.Arg("zipcode","Location").String()
-	taskVent = base.Command("taskVentilator","Task Ventilator")
-	taskWork = base.Command("taskWorker","Task Worker")
-	taskSink = base.Command("taskSink","Task Sink")
-	msReader = base.Command("msreader","Multi Socket Reader")
-	msPoller = base.Command("mspoller","Another Multi Socket Reader")
-    rrClient = base.Command("rrclient","Request Reply Client")
-    rrBroker = base.Command("rrbroker","Request Reply Broker")
-    rrWorker = base.Command("rrworker","Request Reply Worker")
-    msqQueue = base.Command("msgqueue","Message Queue")
-    interrupt = base.Command("interrupt","Interrupt Client")
-
+	base      = kingpin.New("base", "ZeroMQ Demo")
+	hwSrv     = base.Command("hwserver", "Run HwServer")
+	hwClt     = base.Command("hwclient", "Run HwClient")
+	ver       = base.Command("version", "Show ZeroMQ version")
+	wuSrv     = base.Command("wuserver", "Weather Update server")
+	wuClt     = base.Command("wuclient", "Weather Update Client")
+	wuCltArgs = wuClt.Arg("zipcode", "Location").String()
+	taskVent  = base.Command("taskVentilator", "Task Ventilator")
+	taskWork  = base.Command("taskWorker", "Task Worker")
+	taskSink  = base.Command("taskSink", "Task Sink")
+	msReader  = base.Command("msreader", "Multi Socket Reader")
+	msPoller  = base.Command("mspoller", "Another Multi Socket Reader")
+	rrClient  = base.Command("rrclient", "Request Reply Client")
+	rrBroker  = base.Command("rrbroker", "Request Reply Broker")
+	rrWorker  = base.Command("rrworker", "Request Reply Worker")
+	msqQueue  = base.Command("msgqueue", "Message Queue")
+	interrupt = base.Command("interrupt", "Interrupt Client")
+	mtserver  = base.Command("mtserver", "Multithreaded hw server")
 )
 
 func main() {
@@ -53,7 +53,7 @@ func main() {
 		clients.WuClient(*wuCltArgs)
 
 	case taskVent.FullCommand():
-		 servers.TaskVentilator()
+		servers.TaskVentilator()
 
 	case taskWork.FullCommand():
 		workers.TaskWorker()
@@ -81,6 +81,10 @@ func main() {
 
 	case interrupt.FullCommand():
 		clients.Interrupt()
+
+	case mtserver.FullCommand():
+		servers.MTserver()
+
 	}
 
 	os.Exit(0)

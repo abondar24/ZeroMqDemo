@@ -1,9 +1,9 @@
 package workers
 
 import (
-	"log"
-	"github.com/pebbe/zmq4"
 	"fmt"
+	"github.com/pebbe/zmq4"
+	"log"
 	"strconv"
 	"time"
 )
@@ -17,7 +17,8 @@ func TaskWorker() {
 	}
 	defer receiver.Close()
 
-	if receiver.Connect("tcp://localhost:5557") != nil {
+	err = receiver.Connect("tcp://localhost:5557")
+	if err != nil {
 		log.Fatalln(err)
 	}
 
@@ -28,7 +29,8 @@ func TaskWorker() {
 	}
 	defer sender.Close()
 
-	if sender.Connect("tcp://localhost:5558") != nil {
+	err = sender.Connect("tcp://localhost:5558")
+	if err != nil {
 		log.Fatalln(err)
 	}
 
@@ -39,11 +41,13 @@ func TaskWorker() {
 	}
 	defer controller.Close()
 
-	if controller.Connect("tcp://localhost:5559") != nil {
+	err = controller.Connect("tcp://localhost:5559")
+	if err != nil {
 		log.Fatalln(err)
 	}
 
-	if controller.SetSubscribe("") !=nil{
+	err = controller.SetSubscribe("")
+	if err != nil {
 		log.Fatalln(err)
 	}
 
@@ -59,7 +63,7 @@ func TaskWorker() {
 		}
 
 		for _, socket := range sockets {
-			switch  s := socket.Socket; s {
+			switch s := socket.Socket; s {
 			case receiver:
 				msg, _ := s.Recv(0)
 				if err != nil {
@@ -76,7 +80,7 @@ func TaskWorker() {
 
 				time.Sleep(time.Duration(msec) * 1e6)
 
-				_,err = sender.Send(msg, 0)
+				_, err = sender.Send(msg, 0)
 				if err != nil {
 					log.Println(err)
 				}

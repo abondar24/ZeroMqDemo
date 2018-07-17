@@ -91,3 +91,8 @@ go build
 ```yaml
    ./main interrupt
 ```
+
+- mtserver - multithreaded version of hwserver
+```yaml
+   ./main mtserver
+```

@@ -1,9 +1,9 @@
 package clients
 
 import (
-	"log"
-	"github.com/pebbe/zmq4"
 	"fmt"
+	"github.com/pebbe/zmq4"
+	"log"
 )
 
 func MsPoller() {
@@ -15,7 +15,8 @@ func MsPoller() {
 	}
 	defer receiver.Close()
 
-	if receiver.Connect("tcp://localhost:5557") != nil {
+	err = receiver.Connect("tcp://localhost:5557")
+	if err != nil {
 		log.Fatalln(err)
 	}
 
@@ -26,11 +27,13 @@ func MsPoller() {
 	}
 	defer subscriber.Close()
 
-	if subscriber.Connect("tcp://localhost:5556") != nil {
+	err = subscriber.Connect("tcp://localhost:5556")
+	if err != nil {
 		log.Fatalln(err)
 	}
 
-	if subscriber.SetSubscribe("95134") != nil {
+	err = subscriber.SetSubscribe("95134")
+	if err != nil {
 		log.Fatalln(err)
 	}
 
@@ -45,7 +48,7 @@ func MsPoller() {
 		}
 
 		for _, socket := range sockets {
-			switch  s := socket.Socket; s {
+			switch s := socket.Socket; s {
 			case receiver:
 				task, _ := s.Recv(0)
 				if err != nil {
