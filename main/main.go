@@ -7,6 +7,7 @@ import (
 
 	"os"
 	"github.com/abondar24/ZeroMqDemo/workers"
+	"github.com/abondar24/ZeroMqDemo/brokers"
 )
 
 var (
@@ -23,6 +24,8 @@ var (
 	msReader = base.Command("msreader","Multi Socket Reader")
 	msPoller = base.Command("mspoller","Another Multi Socket Reader")
     rrClient = base.Command("rrclient","Request Reply Client")
+    rrBroker = base.Command("rrbroker","Request Reply Broker")
+    rrWorker = base.Command("rrworker","Request Reply Worker")
 )
 
 func main() {
@@ -62,6 +65,12 @@ func main() {
 
 	case rrClient.FullCommand():
 		clients.RRclient()
+
+	case rrBroker.FullCommand():
+		brokers.RRbroker()
+
+	case rrWorker.FullCommand():
+		workers.RRworker()
 
 	}
 

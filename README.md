@@ -66,3 +66,18 @@ go build
 ```yaml
    ./main mspoller
 ```
+
+- rrclient - client which sends requests to rrworker through rrbroker and gets responses
+```yaml
+   ./main rrclient
+```
+
+- rrbroker - broker for binding multiple rrclients and rrworkers. only one broker is required
+```yaml
+   ./main rrbroker
+```
+
+- rrworker - server which gets requests from  rrclient and sends response back
+```yaml
+   ./main rrworker
+```
