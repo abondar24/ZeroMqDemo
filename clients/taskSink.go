@@ -10,14 +10,8 @@ import (
 
 func TaskSink()  {
 
-	context,err :=zmq4.NewContext()
-	if err!=nil{
-		log.Fatal(err)
-	}
-	defer  context.Term()
-
 	//get msg from ventilator
-	receiver, err := context.NewSocket(zmq4.PULL)
+	receiver, err := zmq4.NewSocket(zmq4.PULL)
 	if err!=nil{
 		log.Fatal(err)
 	}
@@ -26,7 +20,7 @@ func TaskSink()  {
 
 
 	//input control socket
-	controller, err := context.NewSocket(zmq4.PUB)
+	controller, err := zmq4.NewSocket(zmq4.PUB)
 	if err!=nil{
 		log.Fatal(err)
 	}

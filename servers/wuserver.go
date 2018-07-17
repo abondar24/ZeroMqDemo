@@ -9,17 +9,13 @@ import (
 )
 
 func WuServer(){
-	context,err :=zmq4.NewContext()
+
+
+	socket, err := zmq4.NewSocket(zmq4.PUB)
 	if err!=nil{
 		log.Fatal(err)
 	}
 
-	socket, err := context.NewSocket(zmq4.PUB)
-	if err!=nil{
-		log.Fatal(err)
-	}
-
-	defer  context.Term()
 	defer  socket.Close()
 
 	socket.Bind("tcp://*:5556")

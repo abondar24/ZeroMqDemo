@@ -9,18 +9,12 @@ import (
 )
 
 func WuClient(zipcode string){
-	context,err :=zmq4.NewContext()
 
+	socket, err := zmq4.NewSocket(zmq4.SUB)
 	if err!=nil{
 		log.Fatal(err)
 	}
 
-	socket, err := context.NewSocket(zmq4.SUB)
-	if err!=nil{
-		log.Fatal(err)
-	}
-
-	defer  context.Term()
 	defer  socket.Close()
 
 	var temps []string

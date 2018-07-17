@@ -8,19 +8,13 @@ import (
 )
 
 func HwServer(){
-    context,err :=zmq4.NewContext()
 
-    if err!=nil{
-		log.Fatal(err)
-	}
-
-	socket, err := context.NewSocket(zmq4.REP)
+	socket, err := zmq4.NewSocket(zmq4.REP)
 	if err!=nil{
 		log.Fatal(err)
 	}
 
 
-	defer  context.Term()
 	defer  socket.Close()
 
 	socket.Bind("tcp://*:5555")

@@ -7,18 +7,12 @@ import (
 )
 
 func HwClient(){
-	context,err :=zmq4.NewContext()
 
+	socket, err := zmq4.NewSocket(zmq4.REQ)
 	if err!=nil{
 		log.Fatal(err)
 	}
 
-	socket, err := context.NewSocket(zmq4.REQ)
-	if err!=nil{
-		log.Fatal(err)
-	}
-
-	defer  context.Term()
 	defer  socket.Close()
 
 	fmt.Println("Connecting to hwserver")

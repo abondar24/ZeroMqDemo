@@ -9,13 +9,9 @@ import (
 )
 
 func TaskVentilator(){
-	context,err :=zmq4.NewContext()
-	if err!=nil{
-		log.Fatal(err)
-	}
-	defer  context.Term()
 
-	sender, err := context.NewSocket(zmq4.PUSH)
+
+	sender, err := zmq4.NewSocket(zmq4.PUSH)
 	if err!=nil{
 		log.Fatal(err)
 	}
@@ -24,7 +20,7 @@ func TaskVentilator(){
 	sender.Bind("tcp://*:5557")
 
 	//sender for sending start of batch message
-	sink,err := context.NewSocket(zmq4.PUSH)
+	sink,err := zmq4.NewSocket(zmq4.PUSH)
 	if err!=nil{
 		log.Fatal(err)
 	}

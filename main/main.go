@@ -20,7 +20,9 @@ var (
 	taskVent = base.Command("taskVentilator","Task Ventilator")
 	taskWork = base.Command("taskWorker","Task Worker")
 	taskSink = base.Command("taskSink","Task Sink")
-
+	msReader = base.Command("msreader","Multi Socket Reader")
+	msPoller = base.Command("mspoller","Another Multi Socket Reader")
+    rrClient = base.Command("rrclient","Request Reply Client")
 )
 
 func main() {
@@ -51,6 +53,16 @@ func main() {
 
 	case taskSink.FullCommand():
 		clients.TaskSink()
+
+	case msReader.FullCommand():
+		clients.MsReader()
+
+	case msPoller.FullCommand():
+		clients.MsPoller()
+
+	case rrClient.FullCommand():
+		clients.RRclient()
+
 	}
 
 	os.Exit(0)

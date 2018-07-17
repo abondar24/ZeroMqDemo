@@ -9,14 +9,9 @@ import (
 )
 
 func TaskWorker() {
-	context, err := zmq4.NewContext()
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer context.Term()
 
 	//get msg from ventilator
-	receiver, err := context.NewSocket(zmq4.PULL)
+	receiver, err := zmq4.NewSocket(zmq4.PULL)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -24,7 +19,7 @@ func TaskWorker() {
 	receiver.Connect("tcp://localhost:5557")
 
 	//send messages to task sink
-	sender, err := context.NewSocket(zmq4.PUSH)
+	sender, err := zmq4.NewSocket(zmq4.PUSH)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -32,7 +27,7 @@ func TaskWorker() {
 	sender.Connect("tcp://localhost:5558")
 
 	//input control socket
-	controller, err := context.NewSocket(zmq4.SUB)
+	controller, err := zmq4.NewSocket(zmq4.SUB)
 	if err != nil {
 		log.Fatal(err)
 	}

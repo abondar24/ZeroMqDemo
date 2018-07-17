@@ -1,7 +1,23 @@
 # ZeroMqDemo
-Go ZeroMQ Demo
+Go ZeroMQ examples
+
+## Build and Run
 
 
+```yaml
+go install
+
+./GO_PATH/bin/main <demo name>
+
+or
+
+cd PROJECT_DIR/main
+
+go build
+
+./main <demo name>
+
+```
 
 ## Demos
 
@@ -41,20 +57,12 @@ Go ZeroMQ Demo
    ./main taskSink
 ```
 
-# Build and Run
-
-
+- msreader - multiple socket reader by priority (requires running taskVentilator and wuserver)
 ```yaml
-go install
+   ./main msreader
+```
 
-./GO_PATH/bin/main <demo name>
-
-or
-
-cd PROJECT_DIR/main
-
-go build
-
-./main <demo name>
-
+- mspoller - multiple parallel socket reader (requires running taskVentilator and wuserver)
+```yaml
+   ./main mspoller
 ```
