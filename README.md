@@ -96,3 +96,8 @@ go build
 ```yaml
    ./main mtserver
 ```
+
+- mtrelay - multithreaded relay
+```yaml
+   ./main mtrelay
+```

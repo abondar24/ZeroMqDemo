@@ -30,6 +30,7 @@ var (
 	msqQueue  = base.Command("msgqueue", "Message Queue")
 	interrupt = base.Command("interrupt", "Interrupt Client")
 	mtserver  = base.Command("mtserver", "Multithreaded hw server")
+	mtrelay   = base.Command("mtrelay", "Multithreaded relay")
 )
 
 func main() {
@@ -84,6 +85,9 @@ func main() {
 
 	case mtserver.FullCommand():
 		servers.MTserver()
+
+	case mtrelay.FullCommand():
+		MTrelay()
 
 	}
 
