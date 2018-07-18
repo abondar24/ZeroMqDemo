@@ -109,7 +109,17 @@ list of demos: ./main --help
    ./main syncpub
 ```
 
-- syncsub - multithreaded subscriber
+- syncsub - synchronized subscriber
 ```yaml
    ./main syncsub
+```
+
+- envpub - publisher with key in envelope
+```yaml
+   ./main envpub
+```
+
+- envsub -subscriber  with key in envelope
+```yaml
+   ./main envsub
 ```

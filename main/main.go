@@ -33,6 +33,8 @@ var (
 	mtrelay   = base.Command("mtrelay", "Multithreaded relay")
 	syncpub   = base.Command("syncpub", "Synchronized publisher")
 	syncsub   = base.Command("syncsub", "Synchronized subscriber")
+	envpub    = base.Command("envpub", "Envelope publisher")
+	envsub    = base.Command("envsub", "Envelope subscriber")
 )
 
 func main() {
@@ -96,6 +98,12 @@ func main() {
 
 	case syncsub.FullCommand():
 		clients.SyncSub()
+
+	case envpub.FullCommand():
+		servers.EnvPub()
+
+	case envsub.FullCommand():
+		clients.EnvSub()
 
 	}
 
