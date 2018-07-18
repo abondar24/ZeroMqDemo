@@ -15,6 +15,8 @@ cd PROJECT_DIR/main
 
 go build
 
+list of demos: ./main --help
+
 ./main <demo name>
 
 ```
@@ -100,4 +102,14 @@ go build
 - mtrelay - multithreaded relay
 ```yaml
    ./main mtrelay
+```
+
+- syncpub - synchronized publisher
+```yaml
+   ./main syncpub
+```
+
+- syncsub - multithreaded subscriber
+```yaml
+   ./main syncsub
 ```

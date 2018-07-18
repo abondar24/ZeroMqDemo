@@ -31,6 +31,8 @@ var (
 	interrupt = base.Command("interrupt", "Interrupt Client")
 	mtserver  = base.Command("mtserver", "Multithreaded hw server")
 	mtrelay   = base.Command("mtrelay", "Multithreaded relay")
+	syncpub   = base.Command("syncpub", "Synchronized publisher")
+	syncsub   = base.Command("syncsub", "Synchronized subscriber")
 )
 
 func main() {
@@ -88,6 +90,12 @@ func main() {
 
 	case mtrelay.FullCommand():
 		MTrelay()
+
+	case syncpub.FullCommand():
+		servers.SyncPub()
+
+	case syncsub.FullCommand():
+		clients.SyncSub()
 
 	}
 
