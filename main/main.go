@@ -35,6 +35,7 @@ var (
 	syncsub   = base.Command("syncsub", "Synchronized subscriber")
 	envpub    = base.Command("envpub", "Envelope publisher")
 	envsub    = base.Command("envsub", "Envelope subscriber")
+	id        = base.Command("identity", "Identities of sockets")
 )
 
 func main() {
@@ -104,6 +105,9 @@ func main() {
 
 	case envsub.FullCommand():
 		clients.EnvSub()
+
+	case id.FullCommand():
+		Identity()
 
 	}
 

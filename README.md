@@ -123,3 +123,8 @@ list of demos: ./main --help
 ```yaml
    ./main envsub
 ```
+
+- identity -demo showing different identitites for request reply pattern
+```yaml
+   ./main identity
+```
