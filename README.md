@@ -119,12 +119,17 @@ list of demos: ./main --help
    ./main envpub
 ```
 
-- envsub -subscriber  with key in envelope
+- envsub - subscriber  with key in envelope
 ```yaml
    ./main envsub
 ```
 
-- identity -demo showing different identitites for request reply pattern
+- identity - demo showing different identitites for request reply pattern
 ```yaml
    ./main identity
+```
+
+- routerReq - demo showing router-to-request pattern
+```yaml
+   ./main rtreq
 ```

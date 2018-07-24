@@ -36,6 +36,7 @@ var (
 	envpub    = base.Command("envpub", "Envelope publisher")
 	envsub    = base.Command("envsub", "Envelope subscriber")
 	id        = base.Command("identity", "Identities of sockets")
+	rtreq     = base.Command("rtreq", "Router to request")
 )
 
 func main() {
@@ -108,6 +109,9 @@ func main() {
 
 	case id.FullCommand():
 		Identity()
+
+	case rtreq.FullCommand():
+		ReqRouter()
 
 	}
 
