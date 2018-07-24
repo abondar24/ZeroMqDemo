@@ -37,6 +37,8 @@ var (
 	envsub    = base.Command("envsub", "Envelope subscriber")
 	id        = base.Command("identity", "Identities of sockets")
 	rtreq     = base.Command("rtreq", "Router to request")
+	llbroker  = base.Command("llbroker", "Load-Balancing broker")
+	llbrokerr = base.Command("llbrokerr", "Load-Balancing broker with reactor")
 )
 
 func main() {
@@ -113,6 +115,11 @@ func main() {
 	case rtreq.FullCommand():
 		ReqRouter()
 
+	case llbroker.FullCommand():
+		brokers.LoadBalacningBroker()
+
+	case llbrokerr.FullCommand():
+		brokers.LoadBalacningReactorBroker()
 	}
 
 	os.Exit(0)

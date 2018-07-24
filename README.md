@@ -133,3 +133,15 @@ list of demos: ./main --help
 ```yaml
    ./main rtreq
 ```
+
+- loadBalancingBroker - load balancing broker demo  with embedded worker and client and using 0MQ high-level api for sending and receinving messages
+
+```yaml
+   ./main llbroker
+```
+
+- loadBalancingBrokerReactor - load balancing broker using reactor 
+
+```yaml
+   ./main llbroker
+```
