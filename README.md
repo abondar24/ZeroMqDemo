@@ -1,5 +1,5 @@
 # ZeroMqDemo
-Go ZeroMQ examples
+Go ZeroMQ examples based on https://github.com/pebbe/zmq4
 
 ## Build and Run
 
@@ -134,14 +134,17 @@ list of demos: ./main --help
    ./main rtreq
 ```
 
-- loadBalancingBroker - load balancing broker demo  with embedded worker and client and using 0MQ high-level api for sending and receinving messages
-
+- loadBalancingBroker - load-balancing broker demo  with embedded worker and client and using 0MQ high-level api for sending and receinving messages
 ```yaml
    ./main llbroker
 ```
 
-- loadBalancingBrokerReactor - load balancing broker using reactor 
-
+- loadBalancingBrokerReactor - load-balancing broker using reactor
 ```yaml
    ./main llbroker
+```
+
+- ayncServer - asyncronious server with emedded client and embedded async workers
+```yaml
+   ./main asyncsrv
 ```

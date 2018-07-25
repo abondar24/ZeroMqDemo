@@ -39,6 +39,7 @@ var (
 	rtreq     = base.Command("rtreq", "Router to request")
 	llbroker  = base.Command("llbroker", "Load-Balancing broker")
 	llbrokerr = base.Command("llbrokerr", "Load-Balancing broker with reactor")
+	asyncsrv  = base.Command("asyncsrv", "Async server")
 )
 
 func main() {
@@ -120,6 +121,9 @@ func main() {
 
 	case llbrokerr.FullCommand():
 		brokers.LoadBalacningReactorBroker()
+
+	case asyncsrv.FullCommand():
+		servers.AsyncServer()
 	}
 
 	os.Exit(0)
