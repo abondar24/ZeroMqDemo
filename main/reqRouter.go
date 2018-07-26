@@ -17,7 +17,7 @@ func workerTask() {
 		log.Fatalln(err)
 	}
 	defer worker.Close()
-	setId(worker)
+	setIdentity(worker)
 	worker.Connect("tcp://localhost:5671")
 
 	total := 0
@@ -39,7 +39,7 @@ func workerTask() {
 
 }
 
-func setId(soc *zmq4.Socket) {
+func setIdentity(soc *zmq4.Socket) {
 	id := fmt.Sprintf("%04X-%04X", rand.Intn(0x100000), rand.Intn(0x100000))
 	soc.SetIdentity(id)
 }

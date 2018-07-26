@@ -148,3 +148,8 @@ list of demos: ./main --help
 ```yaml
    ./main asyncsrv
 ```
+
+- peering - multibroker peering with embedded client and worker
+```yaml
+   ./main peering <broker> <peeers list>
+```

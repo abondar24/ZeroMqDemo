@@ -40,6 +40,9 @@ var (
 	llbroker  = base.Command("llbroker", "Load-Balancing broker")
 	llbrokerr = base.Command("llbrokerr", "Load-Balancing broker with reactor")
 	asyncsrv  = base.Command("asyncsrv", "Async server")
+	peering   = base.Command("peering", "Peering Broker")
+	broker    = peering.Arg("broker", "Broker Name").Required().String()
+	peers     = peering.Arg("peers", "List of peers").Required().Strings()
 )
 
 func main() {
@@ -123,7 +126,11 @@ func main() {
 		brokers.LoadBalacningReactorBroker()
 
 	case asyncsrv.FullCommand():
-		servers.AsyncServer()
+		AsyncServer()
+
+	case peering.FullCommand():
+		Peering(*broker, *peers...)
+
 	}
 
 	os.Exit(0)
