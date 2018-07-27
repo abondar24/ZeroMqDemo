@@ -43,6 +43,8 @@ var (
 	peering   = base.Command("peering", "Peering Broker")
 	broker    = peering.Arg("broker", "Broker Name").Required().String()
 	peers     = peering.Arg("peers", "List of peers").Required().Strings()
+	lserver   = base.Command("ls", "Lazy server")
+	lclient   = base.Command("lc", "Lazy client")
 )
 
 func main() {
@@ -131,6 +133,11 @@ func main() {
 	case peering.FullCommand():
 		Peering(*broker, *peers...)
 
+	case lserver.FullCommand():
+		servers.LazyServer()
+
+	case lclient.FullCommand():
+		clients.LazyClient()
 	}
 
 	os.Exit(0)

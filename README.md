@@ -153,3 +153,13 @@ list of demos: ./main --help
 ```yaml
    ./main peering <broker> <peeers list>
 ```
+
+- lserver - server simulating issues
+```yaml
+   ./main ls
+  ```
+
+  - lclient - reliable client holding reconnection to lserver
+  ```yaml
+     ./main lc
+    ```
