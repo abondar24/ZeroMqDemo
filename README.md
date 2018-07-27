@@ -163,3 +163,13 @@ list of demos: ./main --help
   ```yaml
      ./main lc
     ```
+
+  - rqueue - reliable queue connecting lclient and rworker
+  ```yaml
+       ./main rq
+  ```
+
+  - rworker - reliable worker
+  ```yaml
+       ./main rw
+  ```

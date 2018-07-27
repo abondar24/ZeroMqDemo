@@ -45,6 +45,8 @@ var (
 	peers     = peering.Arg("peers", "List of peers").Required().Strings()
 	lserver   = base.Command("ls", "Lazy server")
 	lclient   = base.Command("lc", "Lazy client")
+	rworker   = base.Command("rw", "Reliable worker")
+	rqueue    = base.Command("rq", "Reliable queue")
 )
 
 func main() {
@@ -138,6 +140,12 @@ func main() {
 
 	case lclient.FullCommand():
 		clients.LazyClient()
+
+	case rworker.FullCommand():
+		workers.ReliableWorker()
+
+	case rqueue.FullCommand():
+		queues.ReliableQueue()
 	}
 
 	os.Exit(0)
