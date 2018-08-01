@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func RRworker() {
+func RequestReplyRworker() {
 	responder, err := zmq4.NewSocket(zmq4.REP)
 	if err != nil {
 		log.Fatal(err)

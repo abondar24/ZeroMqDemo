@@ -47,6 +47,8 @@ var (
 	lclient   = base.Command("lc", "Lazy client")
 	rworker   = base.Command("rw", "Reliable worker")
 	rqueue    = base.Command("rq", "Reliable queue")
+	rrqueue   = base.Command("rrq", "Robust Reliable Queue")
+	rorworker = base.Command("rrw", "Robust reliable Worker")
 )
 
 func main() {
@@ -91,7 +93,7 @@ func main() {
 		brokers.RRbroker()
 
 	case rrWorker.FullCommand():
-		workers.RRworker()
+		workers.RequestReplyRworker()
 
 	case msqQueue.FullCommand():
 		queues.MsgQueue()
@@ -146,6 +148,12 @@ func main() {
 
 	case rqueue.FullCommand():
 		queues.ReliableQueue()
+
+	case rrqueue.FullCommand():
+		queues.RobustReliableQueue()
+
+	case rorworker.FullCommand():
+		workers.RobustReliableWorker()
 	}
 
 	os.Exit(0)
