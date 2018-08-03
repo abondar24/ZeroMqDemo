@@ -197,5 +197,9 @@ list of demos: ./main --help
           ./main mdcl <true/false>
      ``` 
     
-  
+  - mdsrch - worker  earch discovery client for [Majordomo Protocol](https://rfc.zeromq.org/spec:7/MDP/). requires mdbroker and worker 
+       ```yaml
+            ./main mdsrch <true/false>
+       ``` 
+    
   
