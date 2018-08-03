@@ -173,3 +173,29 @@ list of demos: ./main --help
   ```yaml
        ./main rw
   ```
+
+  - rqueue - robust reliable queue with heartbeat connecting lclient and rorworker
+  ```yaml
+       ./main rrq
+  ```
+
+  - rorworker - robust reliable worker
+  ```yaml
+       ./main rrw
+  ```
+
+  - mdworker - worker based on [Majordomo Protocol](https://rfc.zeromq.org/spec:7/MDP/)
+  ```yaml
+       ./main mdwr <true/false>
+  ```
+  - mdbroker - broker for [Majordomo Protocol](https://rfc.zeromq.org/spec:7/MDP/)
+    ```yaml
+         ./main mdbr <true/false>
+    ```
+  - mdclient - client for [Majordomo Protocol](https://rfc.zeromq.org/spec:7/MDP/)
+     ```yaml
+          ./main mdcl <true/false>
+     ``` 
+    
+  
+  
