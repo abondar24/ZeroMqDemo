@@ -183,23 +183,36 @@ list of demos: ./main --help
   ```yaml
        ./main rrw
   ```
-
-  - mdworker - worker based on [Majordomo Protocol](https://rfc.zeromq.org/spec:7/MDP/)
+### [Majordomo Protocol](https://rfc.zeromq.org/spec:7/MDP/) 
+Service oriented reliable pattern
+  - mdworker - worker 
   ```yaml
        ./main mdwr <true/false>
   ```
-  - mdbroker - broker for [Majordomo Protocol](https://rfc.zeromq.org/spec:7/MDP/)
+  - mdbroker - broker 
     ```yaml
          ./main mdbr <true/false>
     ```
-  - mdclient - client for [Majordomo Protocol](https://rfc.zeromq.org/spec:7/MDP/)
+  - mdclient - client 
      ```yaml
           ./main mdcl <true/false>
      ``` 
     
-  - mdsrch - worker  earch discovery client for [Majordomo Protocol](https://rfc.zeromq.org/spec:7/MDP/). requires mdbroker and worker 
+  - mdsrch - worker search discovery client. requires mdbroker and worker 
        ```yaml
             ./main mdsrch <true/false>
        ``` 
+## Titanic
+Disconnected reliable pattern based on Majordomo
+
+- drbroker - broker 
+    ```yaml
+         ./main drbr <true/false>
+    ```
+ - drclient - client 
+     ```yaml
+          ./main drcl <true/false>
+     ``` 
+ Required mdbroker and mdworker. Starting sequence: mdworker,mdbroker, drbroker,drclient  
     
   

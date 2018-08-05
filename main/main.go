@@ -59,6 +59,10 @@ var (
 	mdbrVerbose     = mdbroker.Arg("verbose", "Verbose").String()
 	mdsearch        = base.Command("mdsrch", "Majordomo search")
 	mdsearchVerbose = mdsearch.Arg("verbose", "Verbose").String()
+	drclient        = base.Command("drcl", "Disconnected reliable client")
+	drclientVerbose = drclient.Arg("verbose", "Verbose").String()
+	drbroker        = base.Command("drbr", "Disconnected reliable broker")
+	drbrokerVerbose = drbroker.Arg("verbose", "Verbose").String()
 )
 
 func main() {
@@ -196,6 +200,22 @@ func main() {
 		}
 
 		clients.MajordomoDiscoverySearch(verbose)
+
+	case drclient.FullCommand():
+		verbose, err := strconv.ParseBool(*drclientVerbose)
+		if err == nil {
+			log.Println(err)
+		}
+
+		clients.DisconnectedReliableClient(verbose)
+
+	case drbroker.FullCommand():
+		verbose, err := strconv.ParseBool(*drbrokerVerbose)
+		if err == nil {
+			log.Println(err)
+		}
+
+		brokers.DisconnectedReliableBroker(verbose)
 	}
 
 	os.Exit(0)
