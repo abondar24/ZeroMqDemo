@@ -8,9 +8,7 @@ import (
 	"github.com/abondar24/ZeroMqDemo/brokers"
 	"github.com/abondar24/ZeroMqDemo/queues"
 	"github.com/abondar24/ZeroMqDemo/workers"
-	"log"
 	"os"
-	"strconv"
 )
 
 var (
@@ -52,17 +50,20 @@ var (
 	rrqueue         = base.Command("rrq", "Robust Reliable Queue")
 	rorworker       = base.Command("rrw", "Robust reliable Worker")
 	mdclient        = base.Command("mdcl", "Majordomo client")
-	mdClVerbose     = mdclient.Arg("verbose", "Verbose").String()
+	mdClVerbose     = mdclient.Arg("verbose", "Verbose").Bool()
 	mdworker        = base.Command("mdwr", "Majordomo worker")
-	mdWrVerbose     = mdworker.Arg("verbose", "Verbose").String()
+	mdWrVerbose     = mdworker.Arg("verbose", "Verbose").Bool()
 	mdbroker        = base.Command("mdbr", "Majordomo worker")
-	mdbrVerbose     = mdbroker.Arg("verbose", "Verbose").String()
+	mdbrVerbose     = mdbroker.Arg("verbose", "Verbose").Bool()
 	mdsearch        = base.Command("mdsrch", "Majordomo search")
-	mdsearchVerbose = mdsearch.Arg("verbose", "Verbose").String()
+	mdsearchVerbose = mdsearch.Arg("verbose", "Verbose").Bool()
 	drclient        = base.Command("drcl", "Disconnected reliable client")
-	drclientVerbose = drclient.Arg("verbose", "Verbose").String()
+	drclientVerbose = drclient.Arg("verbose", "Verbose").Bool()
 	drbroker        = base.Command("drbr", "Disconnected reliable broker")
-	drbrokerVerbose = drbroker.Arg("verbose", "Verbose").String()
+	drbrokerVerbose = drbroker.Arg("verbose", "Verbose").Bool()
+	haserver        = base.Command("hasrv", "Highly Available server")
+	haserverPrimary = haserver.Arg("primary", "Primary server").Bool()
+	haclient        = base.Command("haclt", "Highly Available client")
 )
 
 func main() {
@@ -170,52 +171,28 @@ func main() {
 		workers.RobustReliableWorker()
 
 	case mdclient.FullCommand():
-		verbose, err := strconv.ParseBool(*mdClVerbose)
-		if err == nil {
-			log.Println(err)
-		}
-
-		clients.MajordomoClient(verbose)
+		clients.MajordomoClient(*mdClVerbose)
 
 	case mdworker.FullCommand():
-		verbose, err := strconv.ParseBool(*mdWrVerbose)
-		if err == nil {
-			log.Println(err)
-		}
-
-		workers.MajordomoWorker(verbose)
+		workers.MajordomoWorker(*mdWrVerbose)
 
 	case mdbroker.FullCommand():
-		verbose, err := strconv.ParseBool(*mdbrVerbose)
-		if err == nil {
-			log.Println(err)
-		}
-
-		brokers.MajordomoBroker(verbose)
+		brokers.MajordomoBroker(*mdbrVerbose)
 
 	case mdsearch.FullCommand():
-		verbose, err := strconv.ParseBool(*mdsearchVerbose)
-		if err == nil {
-			log.Println(err)
-		}
-
-		clients.MajordomoDiscoverySearch(verbose)
+		clients.MajordomoDiscoverySearch(*mdsearchVerbose)
 
 	case drclient.FullCommand():
-		verbose, err := strconv.ParseBool(*drclientVerbose)
-		if err == nil {
-			log.Println(err)
-		}
-
-		clients.DisconnectedReliableClient(verbose)
+		clients.DisconnectedReliableClient(*drclientVerbose)
 
 	case drbroker.FullCommand():
-		verbose, err := strconv.ParseBool(*drbrokerVerbose)
-		if err == nil {
-			log.Println(err)
-		}
+		brokers.DisconnectedReliableBroker(*drbrokerVerbose)
 
-		brokers.DisconnectedReliableBroker(verbose)
+	case haserver.FullCommand():
+		servers.HAServer(*haserverPrimary)
+
+	case haclient.FullCommand():
+		clients.HighlyAvailableClient()
 	}
 
 	os.Exit(0)

@@ -204,7 +204,7 @@ Service oriented reliable pattern
        ``` 
 ## Titanic
 Disconnected reliable pattern based on Majordomo
-
+(there is an issue with async mdapi)
 - drbroker - broker 
     ```yaml
          ./main drbr <true/false>
@@ -216,3 +216,15 @@ Disconnected reliable pattern based on Majordomo
  Required mdbroker and mdworker. Starting sequence: mdworker,mdbroker, drbroker,drclient  
     
   
+## Binary Star
+Primary/backup high-availability pair
+
+- hsrv - highly-available server. if true is set starts as primary server. 
+   ```yaml
+      ./main hsrv <true> 
+    ``` 
+     
+- hclt - hiighly-available  client.
+
+Two servers must be run: one in primary mode, another in backup 
+Idea - stop primary server and restart it. The servers will change roles.   
