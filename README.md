@@ -228,3 +228,45 @@ Primary/backup high-availability pair
 
 Two servers must be run: one in primary mode, another in backup 
 Idea - stop primary server and restart it. The servers will change roles.   
+
+## [Freelance Protocol](http://rfc.zeromq.org/spec:10.)
+
+Brokerless connection between server and client
+
+### Model 1: simple retry and failover
+
+- brlServerFail - brokerless failover server
+```yaml
+./main bsf <endpoint>
+```
+
+- brlClientFail - brokerless failover client
+```yaml
+./main bcf <endpoint> <endpoint>
+```
+
+Run: start serveral servers and put as endpoints param to client servers addresses
+### Model 2: send message from client, wait , try another server
+- brlMsgServerFail - brokerless failover server receiving messages from client
+```yaml
+./main bsmf <endpoint>
+```
+
+- brlRepClientFail - brokerless failover client sending multiple replies to servers and showing avg roundtrip cost
+```yaml
+./main bcrf <endpoint> <endpoint>
+```
+Run: start serveral servers and put as endpoints param to client servers addresses
+
+### Model 3: routing usage
+
+- brlRtServer - brokerless routing server
+```yaml
+./main bsrtf <port> <true>
+```
+
+- brlRtClient - brokerless async routing client showing avg roundtrip cost
+```yaml
+./main bcrtf
+```
+Run: start two servers with ports 5555 and 5556 and one client.
