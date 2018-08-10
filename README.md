@@ -273,9 +273,30 @@ Run: start two servers with ports 5555 and 5556 and one client.
 
 ## Espresso Pattern
 
-Pub-Sub tracing
+Pub-Sub messages tracing
 
 - pstracing - tracing messages comming from publisher to subscriber via pipe
 ```yaml
 ./main pst
 ```
+
+## Last Value Caching
+
+Model where new subscriber catches missed messages after joining
+
+- ptlPub - publisher sending 1000 topics and one random update per second
+```yaml
+./main ptp <cacheEnabled=true/false>
+```
+
+- ptlSub - subscriber which conencts to one random topic and gets messages
+```yaml
+./main pts <cacheEnabled=true/false>
+```
+
+- lvcProxy - Last value caching proxy for data resending
+```yaml
+./main lvc 
+```
+
+Two subscriber required for demo. Runing order: lvc,pub, more than one sub

@@ -77,6 +77,11 @@ var (
 	brlRtServerVerbose = brlRtServer.Arg("isVerbose", "Is verbose?").Bool()
 	brlRtClient        = base.Command("bcrtf", "Brokerless failover async client")
 	pstrace            = base.Command("pst", "Pub-Sub Tracing")
+	ptpubl             = base.Command("ptp", "Pathological publisher")
+	ptpCache           = ptpubl.Arg("pcache", "Cache required?").Bool()
+	ptsub              = base.Command("pts", "Pathological subscriber")
+	ptsCache           = ptsub.Arg("scache", "Cache required?").Bool()
+	lvcache            = base.Command("lvc", "Last Value Cache")
 )
 
 func main() {
@@ -227,6 +232,15 @@ func main() {
 
 	case pstrace.FullCommand():
 		PubSubTracing()
+
+	case ptpubl.FullCommand():
+		servers.PathologicalPublisher(*ptpCache)
+
+	case ptsub.FullCommand():
+		clients.PathologicalSubscriber(*ptsCache)
+
+	case lvcache.FullCommand():
+		servers.LastValueCache()
 	}
 
 	os.Exit(0)
