@@ -76,6 +76,7 @@ var (
 	brlRtServerPort    = brlRtServer.Arg("port", "Port").String()
 	brlRtServerVerbose = brlRtServer.Arg("isVerbose", "Is verbose?").Bool()
 	brlRtClient        = base.Command("bcrtf", "Brokerless failover async client")
+	pstrace            = base.Command("pst", "Pub-Sub Tracing")
 )
 
 func main() {
@@ -223,6 +224,9 @@ func main() {
 
 	case brlRtClient.FullCommand():
 		clients.BrokerlessFailoverRoutingClient()
+
+	case pstrace.FullCommand():
+		PubSubTracing()
 	}
 
 	os.Exit(0)

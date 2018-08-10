@@ -270,3 +270,12 @@ Run: start serveral servers and put as endpoints param to client servers address
 ./main bcrtf
 ```
 Run: start two servers with ports 5555 and 5556 and one client.
+
+## Espresso Pattern
+
+Pub-Sub tracing
+
+- pstracing - tracing messages comming from publisher to subscriber via pipe
+```yaml
+./main pst
+```
