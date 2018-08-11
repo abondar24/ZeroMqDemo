@@ -299,4 +299,13 @@ Model where new subscriber catches missed messages after joining
 ./main lvc 
 ```
 
-Two subscriber required for demo. Runing order: lvc,pub, more than one sub
+Two subscriber required for demo. Runing order: lvc,pub, more than one sub.
+
+## Suicidal Snail Pattern
+
+Slow subscriber detection
+
+- slowSubDetection - subscirber dies if msg is 1 second late. publisher send messsage with time stamp every msec
+```yaml
+./main ssd 
+```

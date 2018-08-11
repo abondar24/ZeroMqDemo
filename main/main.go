@@ -82,6 +82,7 @@ var (
 	ptsub              = base.Command("pts", "Pathological subscriber")
 	ptsCache           = ptsub.Arg("scache", "Cache required?").Bool()
 	lvcache            = base.Command("lvc", "Last Value Cache")
+	slowSubDetection   = base.Command("ssd", "Slow Subscriber detection")
 )
 
 func main() {
@@ -241,6 +242,9 @@ func main() {
 
 	case lvcache.FullCommand():
 		servers.LastValueCache()
+
+	case slowSubDetection.FullCommand():
+		SlowSubscriberDetection()
 	}
 
 	os.Exit(0)
