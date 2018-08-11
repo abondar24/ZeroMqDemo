@@ -5,6 +5,7 @@ import (
 	"github.com/abondar24/ZeroMqDemo/kvmessage"
 	"github.com/pebbe/zmq4"
 	"log"
+	"math/rand"
 	"time"
 )
 
@@ -20,14 +21,15 @@ func ReliablePubSubClient() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-
-	// or messages between snapshot and next are lost
-	subscriber.SetRcvhwm(100000)
-	subscriber.SetSubscribe("")
 	subscriber.Connect("tcp://localhost:5557")
 
-	time.Sleep(time.Second)
+	publisher, err := zmq4.NewSocket(zmq4.PUSH)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	publisher.Connect("tcp://localhost:5558")
 
+	rand.Seed(time.Now().UnixNano())
 	kvmap := make(map[string]*kvmessage.KVmsg)
 
 	sequence := int64(0)
@@ -51,26 +53,43 @@ func ReliablePubSubClient() {
 	}
 	snapshot.Close()
 
-	first := true
+	poller := zmq4.NewPoller()
+	poller.Add(subscriber, zmq4.POLLIN)
+	alarm := time.Now().Add(1000 * time.Millisecond)
 
 	for {
-		kvmsg, err := kvmessage.RecvKVmsg(subscriber)
+		tickless := alarm.Sub(time.Now())
+		if tickless < 0 {
+			tickless = 0
+		}
+
+		polled, err := poller.Poll(tickless)
 		if err != nil {
 			log.Fatalln(err)
 		}
 
-		if seq, _ := kvmsg.GetSequence(); seq > sequence {
-			sequence, err := kvmsg.GetSequence()
+		if len(polled) == 1 {
+			kvmsg, err := kvmessage.RecvKVmsg(subscriber)
 			if err != nil {
 				log.Fatalln(err)
 			}
 
-			kvmsg.StoreMsg(kvmap)
-			if first {
-				//show first update after snapshot
-				first = false
-				fmt.Println("Next:", sequence)
+			if seq, _ := kvmsg.GetSequence(); seq > sequence {
+				sequence = seq
+				kvmsg.StoreMsg(kvmap)
+				fmt.Println("Received update =", sequence)
 			}
 		}
+
+		//timed out, send random kvmsg
+		if time.Now().After(alarm) {
+			kvmsg := kvmessage.NewKVMessage(0)
+			kvmsg.SetKey(fmt.Sprint(rand.Intn(10000)))
+			kvmsg.SetBody(fmt.Sprint(rand.Intn(1000000)))
+			kvmsg.SendKVmsg(publisher)
+			alarm = time.Now().Add(1000 * time.Millisecond)
+		}
 	}
+
+	fmt.Printf("Interrupted\n%d messages in\n", sequence)
 }
