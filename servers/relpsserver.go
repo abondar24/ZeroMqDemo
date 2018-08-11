@@ -5,23 +5,27 @@ import (
 	"github.com/abondar24/ZeroMqDemo/kvmessage"
 	"github.com/pebbe/zmq4"
 	"log"
+	"strings"
 	"time"
 )
 
 func ReliablePubSubServer() {
 
+	//state request
 	snapshot, err := zmq4.NewSocket(zmq4.ROUTER)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	snapshot.Bind("tcp://*:5556")
 
+	//updates
 	publisher, err := zmq4.NewSocket(zmq4.PUB)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	publisher.Bind("tcp://*:5557")
 
+	//state updates
 	collector, err := zmq4.NewSocket(zmq4.PULL)
 	if err != nil {
 		log.Fatalln(err)
@@ -67,9 +71,13 @@ LOOP:
 					break LOOP
 				}
 
+				subtree := msg[2]
+
 				for _, kvmsg := range kvmap {
-					snapshot.Send(id, zmq4.SNDMORE)
-					kvmsg.SendKVmsg(snapshot)
+					if key, _ := kvmsg.GetKey(); strings.HasPrefix(key, subtree) {
+						snapshot.Send(id, zmq4.SNDMORE)
+						kvmsg.SendKVmsg(snapshot)
+					}
 				}
 
 				fmt.Printf("Sending state snaphot=%d\n", sequence)
