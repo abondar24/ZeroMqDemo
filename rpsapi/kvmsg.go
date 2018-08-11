@@ -1,29 +1,35 @@
-package kvmessage
+package rpsapi
 
 import (
 	"errors"
 	"fmt"
+	"github.com/pborman/uuid"
 	"github.com/pebbe/zmq4"
 	"log"
 	"os"
+	"strings"
 )
 
 const (
 	frameKey    = 0
 	frameSeq    = 1
-	frameBody   = 2
-	kvmsgFrames = 3
+	frameUUID   = 2
+	frameProps  = 3
+	frameBody   = 4
+	kvmsgFrames = 5
 )
 
 type KVmsg struct {
 	present []bool //presense inidcator for frame
 	frame   []string
+	props   []string
 }
 
 func NewKVMessage(seq int64) (kvmsg *KVmsg) {
 	kvmsg = &KVmsg{
 		present: make([]bool, kvmsgFrames),
 		frame:   make([]string, kvmsgFrames),
+		props:   make([]string, 0),
 	}
 
 	kvmsg.SetSequence(seq)
@@ -45,13 +51,39 @@ func RecvKVmsg(socket *zmq4.Socket) (kvmsg *KVmsg, err error) {
 		kvmsg.frame[i] = msg[i]
 		kvmsg.present[i] = true
 	}
+	kvmsg.decodeProps()
 
 	return
 }
 
+func (kvmsg *KVmsg) encodeProps() {
+	kvmsg.frame[frameProps] = strings.Join(kvmsg.props, "\n") + "\n"
+	kvmsg.present[frameProps] = true
+}
+
+func (kvmsg *KVmsg) decodeProps() {
+	kvmsg.props = strings.Split(kvmsg.frame[frameProps], "\n")
+	if ln := len(kvmsg.props); ln > 0 && kvmsg.props[ln-1] == "" {
+		kvmsg.props = kvmsg.props[:ln-1]
+	}
+}
+
 func (kvmsg *KVmsg) SendKVmsg(socket *zmq4.Socket) (err error) {
 	fmt.Printf("Send to %s: %q\n", socket, kvmsg.frame)
+	kvmsg.encodeProps()
 	_, err = socket.SendMessage(kvmsg.frame)
+	return
+}
+
+func (kvmsg *KVmsg) Dup() (dup *KVmsg) {
+	dup = &KVmsg{
+		present: make([]bool, kvmsgFrames),
+		frame:   make([]string, kvmsgFrames),
+		props:   make([]string, len(kvmsg.props)),
+	}
+	copy(dup.present, kvmsg.present)
+	copy(dup.frame, kvmsg.frame)
+	copy(dup.props, kvmsg.props)
 	return
 }
 
@@ -127,9 +159,65 @@ func (kvmsg *KVmsg) BodySize() int {
 	return 0
 }
 
+func (kvmsg *KVmsg) GetUUID() (uuid string, err error) {
+	if !kvmsg.present[frameUUID] {
+		err = errors.New("uuid not set")
+		return
+	}
+
+	uuid = kvmsg.frame[frameUUID]
+	return
+}
+
+func (kvmsg *KVmsg) SetUUID() {
+	kvmsg.frame[frameUUID] = string(uuid.NewRandom())
+	kvmsg.present[frameUUID] = true
+}
+
+func (kvmsg *KVmsg) GetProp(name string) (value string, err error) {
+	if !kvmsg.present[frameProps] {
+		err = errors.New("no properties set")
+		return
+	}
+
+	f := name + "="
+	for _, prop := range kvmsg.props {
+		if strings.HasPrefix(prop, f) {
+			value = prop[len(f):]
+			return
+		}
+	}
+	err = errors.New("property not set")
+	return
+}
+
+func (kvmsg *KVmsg) SetProp(name, value string) (err error) {
+	if strings.Index(name, "=") >= 0 {
+		err = errors.New("no '=' allowed in property name")
+		return
+	}
+
+	p := name + "="
+	for i, prop := range kvmsg.props {
+		if strings.HasPrefix(prop, p) {
+			kvmsg.props = append(kvmsg.props[:i], kvmsg.props[i+1:]...)
+			break
+		}
+	}
+
+	kvmsg.props = append(kvmsg.props, name+"="+value)
+	kvmsg.present[frameProps] = true
+	return
+}
+
 func (kvmsg *KVmsg) StoreMsg(kvmap map[string]*KVmsg) {
 	if kvmsg.present[frameKey] {
-		kvmap[kvmsg.frame[frameKey]] = kvmsg
+		if kvmsg.present[frameBody] && kvmsg.frame[frameBody] != "" {
+			kvmap[kvmsg.frame[frameKey]] = kvmsg
+		} else {
+			delete(kvmap, kvmsg.frame[frameKey])
+		}
+
 	}
 }
 
@@ -151,6 +239,15 @@ func (kvmsg *KVmsg) Dump() {
 	}
 
 	fmt.Fprintf(os.Stderr, "[seq:%v][key:%v][size:%v]", seq, key, size)
+	p := "["
+	for _, prop := range kvmsg.props {
+		fmt.Fprint(os.Stderr, p, prop)
+		p = ";"
+	}
+	if p == ";" {
+		fmt.Fprint(os.Stderr, "]")
+	}
+
 	for charNum := 0; charNum < size; charNum++ {
 		fmt.Fprintf(os.Stderr, "%02X", body[charNum])
 	}

@@ -2,7 +2,7 @@ package clients
 
 import (
 	"fmt"
-	"github.com/abondar24/ZeroMqDemo/kvmessage"
+	"github.com/abondar24/ZeroMqDemo/rpsapi"
 	"github.com/pebbe/zmq4"
 	"log"
 	"math/rand"
@@ -32,12 +32,12 @@ func ReliablePubSubClient() {
 	publisher.Connect("tcp://localhost:5558")
 
 	rand.Seed(time.Now().UnixNano())
-	kvmap := make(map[string]*kvmessage.KVmsg)
+	kvmap := make(map[string]*rpsapi.KVmsg)
 
 	sequence := int64(0)
 	snapshot.SendMessage("ICANHAZ?", Subtree)
 	for {
-		kvmsg, err := kvmessage.RecvKVmsg(snapshot)
+		kvmsg, err := rpsapi.RecvKVmsg(snapshot)
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -71,7 +71,7 @@ func ReliablePubSubClient() {
 		}
 
 		if len(polled) == 1 {
-			kvmsg, err := kvmessage.RecvKVmsg(subscriber)
+			kvmsg, err := rpsapi.RecvKVmsg(subscriber)
 			if err != nil {
 				log.Fatalln(err)
 			}
@@ -85,7 +85,7 @@ func ReliablePubSubClient() {
 
 		//timed out, send random kvmsg
 		if time.Now().After(alarm) {
-			kvmsg := kvmessage.NewKVMessage(0)
+			kvmsg := rpsapi.NewKVMessage(0)
 			kvmsg.SetKey(fmt.Sprintf("%s%d", Subtree, rand.Intn(10000)))
 			kvmsg.SetBody(fmt.Sprint(rand.Intn(1000000)))
 			kvmsg.SendKVmsg(publisher)

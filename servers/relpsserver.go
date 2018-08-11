@@ -2,7 +2,7 @@ package servers
 
 import (
 	"fmt"
-	"github.com/abondar24/ZeroMqDemo/kvmessage"
+	"github.com/abondar24/ZeroMqDemo/rpsapi"
 	"github.com/pebbe/zmq4"
 	"log"
 	"strings"
@@ -32,7 +32,7 @@ func ReliablePubSubServer() {
 	}
 	collector.Bind("tcp://*:5558")
 
-	kvmap := make(map[string]*kvmessage.KVmsg)
+	kvmap := make(map[string]*rpsapi.KVmsg)
 	sequence := int64(0)
 
 	poller := zmq4.NewPoller()
@@ -49,7 +49,7 @@ LOOP:
 		for _, item := range polled {
 			switch socket := item.Socket; socket {
 			case collector:
-				kvmsg, err := kvmessage.RecvKVmsg(collector)
+				kvmsg, err := rpsapi.RecvKVmsg(collector)
 				if err != nil {
 					break LOOP
 				}
@@ -82,7 +82,7 @@ LOOP:
 
 				fmt.Printf("Sending state snaphot=%d\n", sequence)
 				snapshot.Send(id, zmq4.SNDMORE)
-				kvmsg := kvmessage.NewKVMessage(sequence)
+				kvmsg := rpsapi.NewKVMessage(sequence)
 				kvmsg.SetKey("KTHXBAI")
 				kvmsg.SetBody("")
 				kvmsg.SendKVmsg(snapshot)

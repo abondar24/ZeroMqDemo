@@ -1,4 +1,4 @@
-package kvmessage
+package rpsapi
 
 import (
 	"github.com/pebbe/zmq4"
@@ -32,7 +32,9 @@ func TestKVmsg(t *testing.T) {
 
 	kvmsg := NewKVMessage(1)
 	kvmsg.SetKey("key")
+	kvmsg.SetUUID()
 	kvmsg.SetBody("body")
+	kvmsg.SetProp("pr", "val")
 	kvmsg.Dump()
 	err = kvmsg.SendKVmsg(output)
 
@@ -54,8 +56,14 @@ func TestKVmsg(t *testing.T) {
 
 	assert.Equal(t, "key", key)
 
-	kvmsg.StoreMsg(kvmap)
+	prop, err := kvmsg.GetProp("pr")
+	if err != nil {
+		t.Error(err)
+	}
 
+	assert.Equal(t, "val", prop)
+
+	kvmsg.StoreMsg(kvmap)
 	input.Close()
 	output.Close()
 	os.Remove("kvmsg_test.ipc")
