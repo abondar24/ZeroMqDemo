@@ -309,3 +309,16 @@ Slow subscriber detection
 ```yaml
 ./main ssd 
 ```
+
+## Clone Pattern
+
+Reliable Pub-Sub
+
+- relPSServer 
+```yaml
+./main rpss 
+```
+- relPSClient
+```yaml
+./main rpsc 
+```

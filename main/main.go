@@ -83,6 +83,8 @@ var (
 	ptsCache           = ptsub.Arg("scache", "Cache required?").Bool()
 	lvcache            = base.Command("lvc", "Last Value Cache")
 	slowSubDetection   = base.Command("ssd", "Slow Subscriber detection")
+	relPSServer        = base.Command("rpss", "Reliable Pub-Sub Server")
+	relPSClient        = base.Command("rpsc", "Reliable Pub-Sub Client")
 )
 
 func main() {
@@ -245,6 +247,12 @@ func main() {
 
 	case slowSubDetection.FullCommand():
 		SlowSubscriberDetection()
+
+	case relPSServer.FullCommand():
+		servers.ReliablePubSubServer()
+
+	case relPSClient.FullCommand():
+		clients.ReliablePubSubClient()
 	}
 
 	os.Exit(0)
