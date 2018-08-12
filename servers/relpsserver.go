@@ -5,90 +5,133 @@ import (
 	"github.com/abondar24/ZeroMqDemo/rpsapi"
 	"github.com/pebbe/zmq4"
 	"log"
+	"strconv"
 	"strings"
 	"time"
 )
 
+type RelPsServer struct {
+	kvmap     map[string]*rpsapi.KVmsg
+	port      int
+	sequence  int64
+	snapshot  *zmq4.Socket
+	publisher *zmq4.Socket
+	collector *zmq4.Socket
+}
+
 func ReliablePubSubServer() {
 
+	srv := &RelPsServer{
+		port:  5556,
+		kvmap: make(map[string]*rpsapi.KVmsg),
+	}
+
+	var err error
 	//state request
-	snapshot, err := zmq4.NewSocket(zmq4.ROUTER)
+	srv.snapshot, err = zmq4.NewSocket(zmq4.ROUTER)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	snapshot.Bind("tcp://*:5556")
+	srv.snapshot.Bind(fmt.Sprint("tcp://*:", srv.port))
 
 	//updates
-	publisher, err := zmq4.NewSocket(zmq4.PUB)
+	srv.publisher, err = zmq4.NewSocket(zmq4.PUB)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	publisher.Bind("tcp://*:5557")
+	srv.publisher.Bind(fmt.Sprint("tcp://*:", srv.port+1))
 
 	//state updates
-	collector, err := zmq4.NewSocket(zmq4.PULL)
+	srv.collector, err = zmq4.NewSocket(zmq4.PULL)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	collector.Bind("tcp://*:5558")
+	srv.collector.Bind(fmt.Sprint("tcp://*:", srv.port+2))
 
-	kvmap := make(map[string]*rpsapi.KVmsg)
-	sequence := int64(0)
+	reactor := zmq4.NewReactor()
+	reactor.AddSocket(srv.snapshot, zmq4.POLLIN, func(st zmq4.State) error { return snapshots(srv) })
+	reactor.AddSocket(srv.collector, zmq4.POLLIN, func(st zmq4.State) error { return collectors(srv) })
+	reactor.AddChannelTime(time.Tick(1000*time.Millisecond), 1, func(v interface{}) error { return flushTTL(srv) })
 
-	poller := zmq4.NewPoller()
-	poller.Add(collector, zmq4.POLLIN)
-	poller.Add(snapshot, zmq4.POLLIN)
+	fmt.Println(reactor.Run(100 * time.Millisecond))
+}
 
-LOOP:
-	for {
-		polled, err := poller.Poll(1000 * time.Millisecond)
-		if err != nil {
-			break
+func snapshots(srv *RelPsServer) (err error) {
+	msg, err := srv.snapshot.RecvMessage(0)
+	if err != nil {
+		return
+	}
+
+	id := msg[0]
+	request := msg[1]
+	if request != "ICANHAZ?" {
+		fmt.Println("Bad request")
+		return
+	}
+
+	subtree := msg[2]
+
+	for _, kvmsg := range srv.kvmap {
+		if key, _ := kvmsg.GetKey(); strings.HasPrefix(key, subtree) {
+			srv.snapshot.Send(id, zmq4.SNDMORE)
+			kvmsg.SendKVmsg(srv.snapshot)
 		}
+	}
 
-		for _, item := range polled {
-			switch socket := item.Socket; socket {
-			case collector:
-				kvmsg, err := rpsapi.RecvKVmsg(collector)
-				if err != nil {
-					break LOOP
-				}
-				sequence++
-				kvmsg.SetSequence(sequence)
-				kvmsg.SendKVmsg(publisher)
-				kvmsg.StoreMsg(kvmap)
-				fmt.Println("Publishing state", sequence)
-			case snapshot:
-				msg, err := snapshot.RecvMessage(0)
-				if err != nil {
-					break LOOP
-				}
+	fmt.Printf("Sending state snaphot=%d\n", srv.sequence)
+	srv.snapshot.Send(id, zmq4.SNDMORE)
+	kvmsg := rpsapi.NewKVMessage(srv.sequence)
+	kvmsg.SetKey("KTHXBAI")
+	kvmsg.SetBody("")
+	kvmsg.SendKVmsg(srv.snapshot)
 
-				id := msg[0]
-				request := msg[1]
-				if request != "ICANHAZ?" {
-					fmt.Println("Bad request")
-					break LOOP
-				}
+	return
+}
 
-				subtree := msg[2]
+func collectors(srv *RelPsServer) (err error) {
+	kvmsg, err := rpsapi.RecvKVmsg(srv.collector)
+	if err != nil {
+		return
+	}
+	srv.sequence++
+	kvmsg.SetSequence(srv.sequence)
+	kvmsg.SendKVmsg(srv.publisher)
 
-				for _, kvmsg := range kvmap {
-					if key, _ := kvmsg.GetKey(); strings.HasPrefix(key, subtree) {
-						snapshot.Send(id, zmq4.SNDMORE)
-						kvmsg.SendKVmsg(snapshot)
-					}
-				}
+	if ttls, e := kvmsg.GetProp("ttl"); e == nil {
+		ttl, e := strconv.ParseInt(ttls, 10, 64)
+		if e != nil {
+			err = e
+			return
+		}
+		kvmsg.SetProp("ttl", fmt.Sprint(time.Now().Add(time.Duration(ttl)*time.Second).Unix()))
+	}
 
-				fmt.Printf("Sending state snaphot=%d\n", sequence)
-				snapshot.Send(id, zmq4.SNDMORE)
-				kvmsg := rpsapi.NewKVMessage(sequence)
-				kvmsg.SetKey("KTHXBAI")
+	kvmsg.StoreMsg(srv.kvmap)
+	fmt.Println("Publishing state", srv.sequence)
+
+	return
+}
+
+func flushTTL(srv *RelPsServer) (err error) {
+	for _, kvmsg := range srv.kvmap {
+		if ttls, e := kvmsg.GetProp("ttl"); e == nil {
+			ttl, e := strconv.ParseInt(ttls, 10, 64)
+			if e != nil {
+				err = e
+				continue
+			}
+			if time.Now().After(time.Unix(ttl, 0)) {
+				srv.sequence++
+				kvmsg.SetSequence(srv.sequence)
 				kvmsg.SetBody("")
-				kvmsg.SendKVmsg(snapshot)
+				e = kvmsg.SendKVmsg(srv.publisher)
+				if e != nil {
+					err = e
+				}
+				kvmsg.StoreMsg(srv.kvmap)
+				fmt.Println("Publishing delete =", srv.sequence)
 			}
 		}
 	}
-
-	fmt.Printf("Interrupted\n%d messages out\n", sequence)
+	return
 }
