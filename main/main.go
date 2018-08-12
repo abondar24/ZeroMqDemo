@@ -84,6 +84,7 @@ var (
 	lvcache            = base.Command("lvc", "Last Value Cache")
 	slowSubDetection   = base.Command("ssd", "Slow Subscriber detection")
 	relPSServer        = base.Command("rpss", "Reliable Pub-Sub Server")
+	relPSServerPrimary = relPSServer.Arg("rpssp", "is primary?").Bool()
 	relPSClient        = base.Command("rpsc", "Reliable Pub-Sub Client")
 )
 
@@ -249,7 +250,7 @@ func main() {
 		SlowSubscriberDetection()
 
 	case relPSServer.FullCommand():
-		servers.ReliablePubSubServer()
+		servers.ReliablePubSubServer(*relPSServerPrimary)
 
 	case relPSClient.FullCommand():
 		clients.ReliablePubSubClient()

@@ -229,6 +229,20 @@ func (srv *HAServer) RegisterPassiveHandler(handler func() error) {
 	srv.passive = handler
 }
 
+func (srv *HAServer) NewActive(handler func() error) {
+	if srv.active != nil {
+		panic("Double Active")
+	}
+	srv.active = handler
+}
+
+func (srv *HAServer) NewPassive(handler func() error) {
+	if srv.passive != nil {
+		panic("Double Passive")
+	}
+	srv.passive = handler
+}
+
 func (srv *HAServer) SetVerbose(verbose bool) {
 	srv.Reactor.SetVerbose(verbose)
 }

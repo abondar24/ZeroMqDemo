@@ -316,7 +316,7 @@ Reliable Pub-Sub
 
 - relPSServer 
 ```yaml
-./main rpss 
+./main rpss <primary=true/false>
 ```
 - relPSClient
 ```yaml
