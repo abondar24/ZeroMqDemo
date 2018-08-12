@@ -277,9 +277,8 @@ func subscriber(srv *RelPsServer) (err error) {
 		fmt.Println("Received snapshot =", srv.sequence)
 	}
 
-	kvmsg, e := rpsapi.RecvKVmsg(srv.subscriber)
-	if e != nil {
-		err = e
+	kvmsg, err := rpsapi.RecvKVmsg(srv.subscriber)
+	if err != nil {
 		return
 	}
 

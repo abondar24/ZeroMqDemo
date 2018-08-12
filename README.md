@@ -314,11 +314,13 @@ Slow subscriber detection
 
 Reliable Pub-Sub
 
-- relPSServer 
+- relPSServer - server
 ```yaml
 ./main rpss <primary=true/false>
 ```
-- relPSClient
+- relPSClient - client
 ```yaml
 ./main rpsc 
 ```
+
+Run: two servers(one primary,one backup) and two client
