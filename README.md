@@ -324,3 +324,9 @@ Reliable Pub-Sub
 ```
 
 Run: two servers(one primary,one backup) and two client
+
+- fileTransfer - file transfer via ZeroMQ
+
+```yaml
+  ./main ft <filePath>
+```

@@ -86,6 +86,8 @@ var (
 	relPSServer        = base.Command("rpss", "Reliable Pub-Sub Server")
 	relPSServerPrimary = relPSServer.Arg("rpssp", "is primary?").Bool()
 	relPSClient        = base.Command("rpsc", "Reliable Pub-Sub Client")
+	fileTransfer       = base.Command("ft", "File transfer via ZeroMQ")
+	filePath           = fileTransfer.Arg("fname", "File path").String()
 )
 
 func main() {
@@ -254,6 +256,9 @@ func main() {
 
 	case relPSClient.FullCommand():
 		clients.ReliablePubSubClient()
+
+	case fileTransfer.FullCommand():
+		FileTransfer(*filePath)
 	}
 
 	os.Exit(0)
