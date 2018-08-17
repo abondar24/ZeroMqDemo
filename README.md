@@ -26,108 +26,115 @@ list of demos: ./main --help
 - hwserver - dummy zeromq server
 
 ```yaml
-   ./main hwserver
+   ./main hws
 ```
 - hwclient - dummy zeromq client for hwserver
 
  ```yaml
-    ./main hwclient
+    ./main hwc
 ```
+- version - show ZeroMQ version
+ ```yaml
+    ./main -v
+```
+
 - wuserver - weather update pub-sub zeromq server
 
 ```yaml
-   ./main wuserver
+   ./main wus
 ```
 - wuclient - weather update pub-sub zeromq client for hwserver
 
  ```yaml
-    ./main wuclient <zipcode>
+    ./main wuc <zipcode>
 ```
 - taskVentilator - generator of parallel tasks which sends batch of tasks via socket
 
 ```yaml
-   ./main taskVentilator
+   ./main tv
 ```
 
 - taskWorker - worker which pulls messages from taskVentilator,does work and pushes to sink
 ```yaml
-   ./main taskWorker
+   ./main tw
 ```
 
 - taskSink - sink pulling results from workers
 ```yaml
-   ./main taskSink
+   ./main ts
 ```
 
 - msreader - multiple socket reader by priority (requires running taskVentilator and wuserver)
 ```yaml
-   ./main msreader
+   ./main msr
 ```
 
 - mspoller - multiple parallel socket reader (requires running taskVentilator and wuserver)
 ```yaml
-   ./main mspoller
+   ./main msp
 ```
 
 - rrclient - client which sends requests to rrworker through rrbroker and gets responses
 ```yaml
-   ./main rrclient
+   ./main rrc
 ```
 
 - rrbroker - broker for binding multiple rrclients and rrworkers. only one broker is required
 ```yaml
-   ./main rrbroker
+   ./main rrb
 ```
 
 - rrworker - server which gets requests from  rrclient and sends response back
 ```yaml
-   ./main rrworker
+   ./main rrw
 ```
 
 - msgqueue - proxy based variant of rrbroker
 ```yaml
-   ./main msgqueue
+   ./main msgq
 ```
 
 - interrupt - client for hwserver for proper CTRL-C handling via channels
 ```yaml
-   ./main interrupt
+   ./main intс
 ```
 
 - mtserver - multithreaded version of hwserver
 ```yaml
-   ./main mtserver
+   ./main mts
 ```
 
 - mtrelay - multithreaded relay
 ```yaml
-   ./main mtrelay
+   ./main mtr
 ```
 
 - syncpub - synchronized publisher
 ```yaml
-   ./main syncpub
+   ./main spb
 ```
 
 - syncsub - synchronized subscriber
 ```yaml
-   ./main syncsub
+   ./main ssb
 ```
 
 - envpub - publisher with key in envelope
 ```yaml
-   ./main envpub
+   ./main epb
 ```
 
 - envsub - subscriber  with key in envelope
 ```yaml
-   ./main envsub
+   ./main esb
 ```
 
 - identity - demo showing different identitites for request reply pattern
 ```yaml
-   ./main identity
+   ./main id
 ```
+
+## The Load-Balancing Pattern
 
 - routerReq - demo showing router-to-request pattern
 ```yaml
@@ -136,23 +143,27 @@ list of demos: ./main --help
 
 - loadBalancingBroker - load-balancing broker demo  with embedded worker and client and using 0MQ high-level api for sending and receinving messages
 ```yaml
-   ./main llbroker
+   ./main llb
 ```
 
 - loadBalancingBrokerReactor - load-balancing broker using reactor
 ```yaml
-   ./main llbroker
+   ./main llbr
 ```
+====END PATTERN====
 
-- ayncServer - asyncronious server with emedded client and embedded async workers
+- asyncServer - asyncronious server with emedded client and embedded async workers
 ```yaml
-   ./main asyncsrv
+   ./main asys
 ```
 
 - peering - multibroker peering with embedded client and worker
 ```yaml
-   ./main peering <broker> <peeers list>
+   ./main peer <broker> <peeers list>
 ```
+## Lazy Pirate Pattern
+
+Simple reliable request-reply pattern 
 
 - lserver - server simulating issues
 ```yaml
@@ -162,7 +173,10 @@ list of demos: ./main --help
   - lclient - reliable client holding reconnection to lserver
   ```yaml
      ./main lc
-    ```
+  ```
+
+## Simple Pirate Pattern
+Basic reliable queing for Lazy Pirate
 
   - rqueue - reliable queue connecting lclient and rworker
   ```yaml
@@ -173,6 +187,8 @@ list of demos: ./main --help
   ```yaml
        ./main rw
   ```
+## Paranoid Pirate Pattern
+Robust reliable queuing
 
   - rqueue - robust reliable queue with heartbeat connecting lclient and rorworker
   ```yaml
